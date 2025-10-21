@@ -23,7 +23,8 @@ class TapViewModel : ViewModel(){
     //       Population Cap                       Food Cap                 Wood and stone cap          Skin cap     Leather  Horse   Copper cap     Faith  Herb   Knowledge Iron cap     Happiness (future use)   Spearman   Archer cap     Warrior Rider cap
     //ListOf(Hut,Chalet,Farmhouse,House,Courtyard,Granary,Logistics Center,Warehouse,Strategic Storage,Hunter Cabin,Curriery,Pasture,Copper Smelter,Temple,Clinic,Library,  Iron Smelter,Bath Pool,Tavern,Theater,Guardhouse,Shooting Range,Barrack,Training Ground)
     private val _buildings = MutableStateFlow<List<Int>>(listOf(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
-    private val _landFree = MutableStateFlow(10)
+    private val _landFree = MutableStateFlow(2000)
+    private val _territory = MutableStateFlow(2000)
     //ListOf(spearmen, archers, warriors, riders)
     private val _warriors = MutableStateFlow<List<Int>>(listOf(0,0,0,0))
     //ListOf(IdleWood,IdleFood,IdleStone,Land,TapWood,TapFood,TapStone)
@@ -33,6 +34,8 @@ class TapViewModel : ViewModel(){
     val stone = _stone.asStateFlow()
     val unemployed = _unemployed.asStateFlow()
     val workers = _workers.asStateFlow()
+    val territory = _territory.asStateFlow()
+    val freeland = _landFree.asStateFlow()
 
     fun updateBasicResources(){
         _wood.value  += (_workers.value[1] * _multipliers.value[0]).toInt()
@@ -54,7 +57,8 @@ class TapViewModel : ViewModel(){
     }
 
     fun updateLand(){
-        _landFree.value += (50 * _multipliers.value[3]).toInt()
+        _landFree.value += (60 * _multipliers.value[3]).toInt()
+        _territory.value += (60 * _multipliers.value[3]).toInt()
     }
 
     fun addPop(){
@@ -106,21 +110,21 @@ class TapViewModel : ViewModel(){
 
 
     fun tapWood(){
-        _wood.value  += (10 * _multipliers.value[4]).toInt()
+        _wood.value  += (1 * _multipliers.value[4]).toInt()
         if(_wood.value>_resourceCaps.value[1]){
             _wood.value -= (_wood.value - _resourceCaps.value[1])
         }
     }
 
     fun tapFood(){
-        _food.value  += (10 * _multipliers.value[5]).toInt()
+        _food.value  += (1 * _multipliers.value[5]).toInt()
         if(_food.value>_resourceCaps.value[0]){
             _food.value -= (_food.value - _resourceCaps.value[0])
         }
     }
 
     fun tapStone(){
-        _stone.value += (10 * _multipliers.value[6]).toInt()
+        _stone.value += (1 * _multipliers.value[6]).toInt()
         if(_stone.value>_resourceCaps.value[2]){
             _stone.value -= (_stone.value - _resourceCaps.value[2])
         }
@@ -128,6 +132,38 @@ class TapViewModel : ViewModel(){
 
     suspend fun npcResource(){
         while(true){
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
+            delay(15000)
+            updateBasicResources()
             delay(15000)
             updateBasicResources()
             delay(15000)
