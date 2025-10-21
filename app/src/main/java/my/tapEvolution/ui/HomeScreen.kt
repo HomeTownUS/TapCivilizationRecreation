@@ -56,12 +56,10 @@ fun HomeScreen(vm: TapViewModel) {
         }*/
         Box(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).background(Color.Green).height(200.dp)){
             //Wood
-            Button(
-                onClick = {vm.tapWood()},
-                modifier = Modifier.padding(8.dp).align(Alignment.CenterStart)
-            ) {
-                Text("Wood")
-            }
+            Image(painter = painterResource(id = R.drawable.trees),
+                contentDescription = "Wood Button",
+                modifier = Modifier.clickable{vm.tapWood()}.padding(8.dp).align(Alignment.CenterStart)
+            )
             /*Button(
                 onClick = { /* Handle click */ },
                 modifier = Modifier.padding(8.dp).align(Alignment.BottomStart)
