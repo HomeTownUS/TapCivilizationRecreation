@@ -72,12 +72,9 @@ fun HomeScreen(vm: TapViewModel) {
                 modifier = Modifier.clickable{vm.tapFood()}.padding(8.dp).align(Alignment.TopCenter)
             )
 
-            Button(
-                onClick = {vm.tapStone()},
-                modifier = Modifier.padding(8.dp).align(Alignment.CenterEnd)
-            ) {
-                Text("Stone")
-            }
+            Image(painter = painterResource(id = R.drawable.stonesource),
+                contentDescription = "Stone Button",
+                modifier = Modifier.clickable{vm.tapStone()}.padding(8.dp).align(Alignment.CenterEnd))
             // Bottom-Right Corner (single button)
             /*Button(
                 onClick = { /* Handle click */ },
