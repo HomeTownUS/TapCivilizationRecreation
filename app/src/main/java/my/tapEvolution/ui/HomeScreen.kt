@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -54,11 +55,11 @@ fun HomeScreen(vm: TapViewModel) {
                 Text("Recover")
             }
         }*/
-        Box(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).background(Color.Green).height(200.dp)){
+        Box(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).background(Color.Green).height(250.dp)){
             //Wood
             Image(painter = painterResource(id = R.drawable.trees),
                 contentDescription = "Wood Button",
-                modifier = Modifier.clickable{vm.tapWood()}.padding(8.dp).align(Alignment.CenterStart)
+                modifier = Modifier.clickable{vm.tapWood()}.padding(8.dp).align(Alignment.CenterStart).size(120.dp,120.dp)
             )
             /*Button(
                 onClick = { /* Handle click */ },
@@ -69,12 +70,13 @@ fun HomeScreen(vm: TapViewModel) {
             Image(
                 painter = painterResource(id = R.drawable.foodbush),
                 contentDescription = "Food button",
-                modifier = Modifier.clickable{vm.tapFood()}.padding(8.dp).align(Alignment.TopCenter)
+                modifier = Modifier.clickable{vm.tapFood()}.padding(8.dp).align(Alignment.TopCenter).size(120.dp,120.dp)
             )
 
             Image(painter = painterResource(id = R.drawable.stonesource),
                 contentDescription = "Stone Button",
-                modifier = Modifier.clickable{vm.tapStone()}.padding(8.dp).align(Alignment.CenterEnd))
+                modifier = Modifier.clickable{vm.tapStone()}.padding(8.dp).align(Alignment.CenterEnd).size(120.dp,120.dp)
+            )
             // Bottom-Right Corner (single button)
             /*Button(
                 onClick = { /* Handle click */ },
