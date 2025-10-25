@@ -36,6 +36,7 @@ class TapViewModel : ViewModel(){
     val workers = _workers.asStateFlow()
     val territory = _territory.asStateFlow()
     val freeland = _landFree.asStateFlow()
+    val buildings = _buildings.asStateFlow()
 
     fun updateBasicResources(){
         _wood.value  += (_workers.value[1] * _multipliers.value[0]).toInt()
@@ -44,7 +45,7 @@ class TapViewModel : ViewModel(){
         }
         _food.value += (_workers.value[0] * _multipliers.value[1]).toInt()
         _food.value -= _population.value
-        if(_food.value>_resourceCaps.value[0]){
+        if(_food.value > _resourceCaps.value[0]){
             _food.value -= (_food.value - _resourceCaps.value[0])
         }
         if(_food.value < 0){
@@ -104,6 +105,34 @@ class TapViewModel : ViewModel(){
             val updatedList = _buildings.value.toMutableList()
             updatedList[0] += 1
             _buildings.value = updatedList
+        }
+    }
+
+    fun buyGranary(){
+        if(_landFree.value >= 30 && _wood.value >= 40){
+            _landFree.value -= 30
+            _wood.value -= 40
+            val updatedList = _buildings.value.toMutableList()
+            updatedList[5] += 1
+            _buildings.value = updatedList
+            val updatedCaps = _resourceCaps.value.toMutableList()
+            updatedCaps[0] += 200
+            _resourceCaps.value = updatedCaps
+        }
+    }
+
+    fun buyWarehouse(){
+        if(_landFree.value >= 60 && _wood.value >= 25 && _stone.value >= 40){
+            _landFree.value -= 60
+            _wood.value -= 25
+            _stone.value -= 40
+            val updatedList = _buildings.value.toMutableList()
+            updatedList[7] += 1
+            _buildings.value = updatedList
+            val updatedCaps = _resourceCaps.value.toMutableList()
+            updatedCaps[1] += 200
+            updatedCaps[2] += 200
+            _resourceCaps.value = updatedCaps
         }
     }
 

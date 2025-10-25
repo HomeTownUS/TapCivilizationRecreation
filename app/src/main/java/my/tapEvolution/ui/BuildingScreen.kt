@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -29,6 +31,7 @@ import my.tapEvolution.TapViewModel
 fun BuildingScreen(vm: TapViewModel){
     val terr by vm.territory.collectAsState()
     val land by vm.freeland.collectAsState()
+    val build by vm.buildings.collectAsState()
     LazyColumn(modifier = Modifier.padding(8.dp)) {
         item{
             Box(modifier = Modifier.fillMaxWidth().height(80.dp)){
@@ -45,11 +48,16 @@ fun BuildingScreen(vm: TapViewModel){
         }
         item{
             Box(modifier = Modifier.fillMaxWidth()) {
-                Image(painter = painterResource(id = R.drawable.geminigeneratedhut),
-                    contentDescription = "Hut Image",
-                    modifier = Modifier.padding(8.dp).align(Alignment.CenterStart).size(60.dp,60.dp)
-                )
-                Column(modifier = Modifier.align(Alignment.TopCenter)) {
+                Column(modifier = Modifier.align(Alignment.CenterStart)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.geminigeneratedhut),
+                        contentDescription = "Hut Image",
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                            .size(60.dp, 60.dp)
+                    )
+                    Text(build[0].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
+                }
+                Column(modifier = Modifier.align(Alignment.Center)) {
                     Text(text = "PopulationLimit: +1")
                     Text(text = "Free land:5")
                     Text(text = "Wood:5")
@@ -59,5 +67,32 @@ fun BuildingScreen(vm: TapViewModel){
                 }
             }
         }
+        item { Spacer(
+            modifier = Modifier.height(8.dp)
+        ) }
+        item{
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.align(Alignment.CenterStart)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.geminigeneratedgrainery),
+                        contentDescription = "Granary Image",
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                            .size(60.dp, 60.dp)
+                    )
+                    Text(build[5].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
+                }
+                Column(modifier = Modifier.align(Alignment.Center)) {
+                    Text(text = "FoodLimit: +200")
+                    Text(text = "Free land:30")
+                    Text(text = "Wood:40")
+                }
+                Button(onClick = { vm.buyGranary() }, modifier = Modifier.align(Alignment.CenterEnd)) {
+                    Text("Buy Granary")
+                }
+            }
+        }
+        item { Spacer(
+            modifier = Modifier.height(8.dp)
+        ) }
     }
 }
