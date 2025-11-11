@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         val VM by viewModels<TapViewModel>()
         lifecycleScope.launch(Dispatchers.Default){
             try{
-                VM.init()
+                VM.init(applicationContext.filesDir)
             } catch (e: Exception) {}
         }
         setContent {

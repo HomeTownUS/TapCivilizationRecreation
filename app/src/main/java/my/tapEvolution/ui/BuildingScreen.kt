@@ -2,7 +2,6 @@ package my.tapEvolution.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -94,5 +93,26 @@ fun BuildingScreen(vm: TapViewModel){
         item { Spacer(
             modifier = Modifier.height(8.dp)
         ) }
+        item{
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.align(Alignment.CenterStart)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.geminigeneratedwarehouse),
+                        contentDescription = "Granary Image",
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                            .size(60.dp, 60.dp)
+                    )
+                    Text(build[5].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
+                }
+                Column(modifier = Modifier.align(Alignment.Center)) {
+                    Text(text = "WoodLimit: +200   StoneLimit: +200")
+                    Text(text = "Free land:60")
+                    Text(text = "Wood:25   Stone:40")
+                }
+                Button(onClick = { vm.buyWarehouse() }, modifier = Modifier.align(Alignment.CenterEnd)) {
+                    Text("Buy Warehouse")
+                }
+            }
+        }
     }
 }

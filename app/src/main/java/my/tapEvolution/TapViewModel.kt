@@ -2,13 +2,23 @@ package my.tapEvolution
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
+import my.tapEvolution.SavedData
+import java.io.File
 
-class TapViewModel : ViewModel(){
+class TapViewModel() : ViewModel(){
     private val _food = MutableStateFlow(0)
     private val _wood = MutableStateFlow(0)
     private val _stone = MutableStateFlow(0)
@@ -25,14 +35,19 @@ class TapViewModel : ViewModel(){
     private val _buildings = MutableStateFlow<List<Int>>(listOf(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
     private val _landFree = MutableStateFlow(2000)
     private val _territory = MutableStateFlow(2000)
-    //ListOf(spearmen, archers, warriors, riders)
+    //ListOf(spearmen, archers, warriors, riders) this is for a future update
     private val _warriors = MutableStateFlow<List<Int>>(listOf(0,0,0,0))
     //ListOf(IdleWood,IdleFood,IdleStone,Land,TapWood,TapFood,TapStone)
     private val _multipliers = MutableStateFlow<List<Double>>(listOf(1.0,2.0,1.0,1.0,1.0,1.0,1.0))
+    //JSON Save Data
+    val fileName = "product.json"
+    private lateinit var file: File
     val food = _food.asStateFlow()
     val wood = _wood.asStateFlow()
     val stone = _stone.asStateFlow()
-    val unemployed = _unemployed.asStateFlow()
+    val unemployed = combine(_population.asStateFlow(),_workers.asStateFlow()){
+        pop, workerList -> pop-workerList.sum()
+    }.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = _population.value - _workers.value.sum())
     val workers = _workers.asStateFlow()
     val territory = _territory.asStateFlow()
     val freeland = _landFree.asStateFlow()
@@ -40,7 +55,7 @@ class TapViewModel : ViewModel(){
 
     fun updateBasicResources(){
         _wood.value  += (_workers.value[1] * _multipliers.value[0]).toInt()
-        if(_wood.value>_resourceCaps.value[1]){
+        if(_wood.value > _resourceCaps.value[1]){
             _wood.value -= (_wood.value - _resourceCaps.value[1])
         }
         _food.value += (_workers.value[0] * _multipliers.value[1]).toInt()
@@ -52,7 +67,7 @@ class TapViewModel : ViewModel(){
             _food.value = 0
         }
         _stone.value += (_workers.value[2] * _multipliers.value[2]).toInt()
-        if(_stone.value>_resourceCaps.value[2]){
+        if(_stone.value > _resourceCaps.value[2]){
             _stone.value -= (_stone.value - _resourceCaps.value[2])
         }
     }
@@ -159,54 +174,74 @@ class TapViewModel : ViewModel(){
         }
     }
 
-    suspend fun npcResource(){
-        while(true){
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            delay(15000)
-            updateBasicResources()
-            updateLand()
+    suspend fun save(){
+        val save: SavedData = SavedData(
+            food = _food.value,
+            wood = _wood.value,
+            stone = _stone.value,
+            population = _population.value,
+            workers = _workers.value,
+            resourceCaps = _resourceCaps.value,
+            popCap = _popCap.value,
+            buildings = _buildings.value,
+            landFree = _landFree.value,
+            territory = _territory.value,
+            warriors = _warriors.value,
+            multipliers = _multipliers.value
+        )
+        val saveString = Json.encodeToString(save)
+        withContext(Dispatchers.IO) {
+            try {
+                file.writeText(saveString)
+            } catch (e: Exception) {println(e)/*Do nothing*/ }
         }
     }
 
-    fun init() {
+    suspend fun npcResource(){
+        var fiveMin = 0
+        while(true){
+            delay(15000)
+            updateBasicResources()
+            save()
+            fiveMin++
+            if (fiveMin >= 20){
+                updateLand()
+                fiveMin = 0
+            }
+        }
+    }
+
+    fun init(fileDir: File) {
         viewModelScope.launch {
+            file = File(fileDir, fileName)
+            withContext(Dispatchers.IO) {
+                if (!file.exists()) {
+                    file.createNewFile()
+                    save()
+                } else {
+                    try {
+                        val sfj = file.readText()
+                        val lastSave = Json.decodeFromString<SavedData>(sfj)
+                        _food.value = lastSave.food
+                        _wood.value = lastSave.wood
+                        _stone.value = lastSave.stone
+                        _population.value = lastSave.population
+                        _workers.value = lastSave.workers
+                        _resourceCaps.value = lastSave.resourceCaps
+                        _popCap.value = lastSave.popCap
+                        _buildings.value = lastSave.buildings
+                        _landFree.value = lastSave.landFree
+                        _territory.value = lastSave.territory
+                        _warriors.value = lastSave.warriors
+                        _multipliers.value = lastSave.multipliers
+                    } catch(e: Exception) {
+                        println(e)
+                        file.delete()
+                        file.createNewFile()
+                        save()
+                    }
+                }
+            }
             npcResource()
         }
     }
