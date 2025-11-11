@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,11 @@ import my.tapEvolution.TapViewModel
 @Composable
 fun HomeScreen(vm: TapViewModel) {
     Box(modifier = Modifier.fillMaxSize().background(Color.Blue)) {
+        val boxHeight = LocalConfiguration.current.screenHeightDp.dp
+        Image(painter = painterResource(id = R.drawable.geminigeneratedvillage1),
+            contentDescription = "Background background image",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxWidth().height(boxHeight-440.dp))
         //TODO: Replace Placeholder for all buttons
 
         // Top-Left Corner (two stacked buttons) future update
