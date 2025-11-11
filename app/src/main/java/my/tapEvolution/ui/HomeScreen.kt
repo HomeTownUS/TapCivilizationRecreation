@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
@@ -56,8 +57,12 @@ fun HomeScreen(vm: TapViewModel) {
             }
         }*/
         Box(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).background(Color.Green).height(250.dp)){
+            Image(painter = painterResource(id = R.drawable.geminigeneratedforeground),
+                contentDescription = "Foreground background image",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxSize())
             //Wood
-            Image(painter = painterResource(id = R.drawable.trees),
+            Image(painter = painterResource(id = R.drawable.geminigeneratedtrees),
                 contentDescription = "Wood Button",
                 modifier = Modifier.clickable{vm.tapWood()}.padding(8.dp).align(Alignment.CenterStart).size(120.dp,120.dp)
             )
@@ -68,12 +73,12 @@ fun HomeScreen(vm: TapViewModel) {
                 Text("Sidebar")
             }*/
             Image(
-                painter = painterResource(id = R.drawable.foodbush),
+                painter = painterResource(id = R.drawable.geminigeneratedfoodbush),
                 contentDescription = "Food button",
                 modifier = Modifier.clickable{vm.tapFood()}.padding(8.dp).align(Alignment.TopCenter).size(120.dp,120.dp)
             )
 
-            Image(painter = painterResource(id = R.drawable.stonesource),
+            Image(painter = painterResource(id = R.drawable.geminigeneratedstonesource),
                 contentDescription = "Stone Button",
                 modifier = Modifier.clickable{vm.tapStone()}.padding(8.dp).align(Alignment.CenterEnd).size(120.dp,120.dp)
             )
