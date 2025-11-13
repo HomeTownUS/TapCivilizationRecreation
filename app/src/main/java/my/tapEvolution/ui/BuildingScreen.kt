@@ -56,7 +56,7 @@ fun BuildingScreen(vm: TapViewModel){
                     )
                     Text(build[0].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
                 }
-                Column(modifier = Modifier.align(Alignment.Center)) {
+                Column(modifier = Modifier.align(Alignment.Center).width(200.dp)) {
                     Text(text = "PopulationLimit: +1")
                     Text(text = "Free land:5")
                     Text(text = "Wood:5")
@@ -80,7 +80,7 @@ fun BuildingScreen(vm: TapViewModel){
                     )
                     Text(build[5].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
                 }
-                Column(modifier = Modifier.align(Alignment.Center)) {
+                Column(modifier = Modifier.align(Alignment.Center).width(200.dp)) {
                     Text(text = "FoodLimit: +200")
                     Text(text = "Free land:30")
                     Text(text = "Wood:40")
@@ -104,7 +104,7 @@ fun BuildingScreen(vm: TapViewModel){
                     )
                     Text(build[5].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
                 }
-                Column(modifier = Modifier.align(Alignment.Center)) {
+                Column(modifier = Modifier.align(Alignment.Center).width(200.dp)) {
                     Text(text = "WoodLimit: +200   StoneLimit: +200")
                     Text(text = "Free land:60")
                     Text(text = "Wood:25   Stone:40")
