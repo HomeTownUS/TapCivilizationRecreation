@@ -102,7 +102,7 @@ fun BuildingScreen(vm: TapViewModel){
                         modifier = Modifier.padding(horizontal = 8.dp)
                             .size(60.dp, 60.dp)
                     )
-                    Text(build[5].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
+                    Text(build[7].toString(), textAlign = TextAlign.Center, modifier = Modifier.width(76.dp).background(Color(0,175,255)))
                 }
                 Column(modifier = Modifier.align(Alignment.Center).width(200.dp)) {
                     Text(text = "WoodLimit: +200   StoneLimit: +200")

@@ -1,21 +1,21 @@
 package my.tapEvolution
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
-import my.tapEvolution.SavedData
 import java.io.File
 
 class TapViewModel() : ViewModel(){
@@ -39,6 +39,8 @@ class TapViewModel() : ViewModel(){
     private val _warriors = MutableStateFlow<List<Int>>(listOf(0,0,0,0))
     //ListOf(IdleWood,IdleFood,IdleStone,Land,TapWood,TapFood,TapStone)
     private val _multipliers = MutableStateFlow<List<Double>>(listOf(1.0,2.0,1.0,1.0,1.0,1.0,1.0))
+    private val _researchTree = MutableStateFlow<List<ResearchNode>>(listOf(ResearchNode("woodcutting",emptyList<String>(),5000, bg = Color.LightGray.value, cost = listOf(10,0,0,0,0,0,0,0,0,0,0,0,0))))
+    private val _elapsedTime = MutableStateFlow(0L)
     //JSON Save Data
     val fileName = "product.json"
     private lateinit var file: File
@@ -52,6 +54,8 @@ class TapViewModel() : ViewModel(){
     val territory = _territory.asStateFlow()
     val freeland = _landFree.asStateFlow()
     val buildings = _buildings.asStateFlow()
+    val researchTree = _researchTree.asStateFlow()
+    val elapsedSec = _elapsedTime.map { it/1000 }.stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = _elapsedTime.value/1000)
 
     fun updateBasicResources(){
         _wood.value  += (_workers.value[1] * _multipliers.value[0]).toInt()
@@ -174,8 +178,23 @@ class TapViewModel() : ViewModel(){
         }
     }
 
+    fun startResearch(nodeName: String){
+        _researchTree.update { nodes ->
+            nodes.map { node ->
+                if(node.name == nodeName && !node.isUnlocked && node.startTimeMillis == null && _food.value >= node.cost[0] && _wood.value >= node.cost[1] && _stone.value >= node.cost[2]){
+                    _food.value -= node.cost[0]
+                    _wood.value -= node.cost[1]
+                    _stone.value -= node.cost[2]
+                    node.copy(startTimeMillis = System.currentTimeMillis(), bg = Color.Gray.value)
+                } else {
+                    node
+                }
+            }
+        }
+    }
+
     suspend fun save(){
-        val save: SavedData = SavedData(
+        val save: DataClasses = DataClasses(
             food = _food.value,
             wood = _wood.value,
             stone = _stone.value,
@@ -187,6 +206,7 @@ class TapViewModel() : ViewModel(){
             landFree = _landFree.value,
             territory = _territory.value,
             warriors = _warriors.value,
+            research = researchTree.value,
             multipliers = _multipliers.value
         )
         val saveString = Json.encodeToString(save)
@@ -197,13 +217,42 @@ class TapViewModel() : ViewModel(){
         }
     }
 
+    private fun updateTimers(){
+        val currentTime = System.currentTimeMillis()
+        _researchTree.update { nodes ->
+            nodes.map { node ->
+                if(node.startTimeMillis != null && !node.isUnlocked){
+                    _elapsedTime.value = currentTime - node.startTimeMillis
+                    if (_elapsedTime.value >= node.durationMillis){
+                        node.copy(isUnlocked = true, startTimeMillis = null, bg = Color.Green.value)
+                    } else {
+                        node
+                    }
+                } else {
+                    node
+                }
+            }
+        }
+    }
+
     suspend fun npcResource(){
         var fiveMin = 0
+        var fifteenSec = 0
+        var fiveSec = 0
         while(true){
-            delay(15000)
-            updateBasicResources()
-            save()
-            fiveMin++
+            delay(1000)
+            updateTimers()
+            fifteenSec++
+            fiveSec++
+            if(fiveSec >= 5){
+                save()
+                fiveSec = 0
+            }
+            if(fifteenSec >= 15) {
+                updateBasicResources()
+                fifteenSec = 0
+                fiveMin++
+            }
             if (fiveMin >= 20){
                 updateLand()
                 fiveMin = 0
@@ -221,7 +270,7 @@ class TapViewModel() : ViewModel(){
                 } else {
                     try {
                         val sfj = file.readText()
-                        val lastSave = Json.decodeFromString<SavedData>(sfj)
+                        val lastSave = Json.decodeFromString<DataClasses>(sfj)
                         _food.value = lastSave.food
                         _wood.value = lastSave.wood
                         _stone.value = lastSave.stone
@@ -233,6 +282,7 @@ class TapViewModel() : ViewModel(){
                         _landFree.value = lastSave.landFree
                         _territory.value = lastSave.territory
                         _warriors.value = lastSave.warriors
+                        _researchTree.value = lastSave.research
                         _multipliers.value = lastSave.multipliers
                     } catch(e: Exception) {
                         println(e)

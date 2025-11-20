@@ -128,7 +128,7 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Home.route) { HomeScreen(vm = VM) }
                         composable(Screen.Population.route) { PopulationScreen(vm = VM) }
                         composable(Screen.Building.route) { BuildingScreen(vm = VM) }
-                        composable(Screen.Tech.route) { TechnologyScreen() }
+                        composable(Screen.Tech.route) { TechnologyScreen(vm = VM) }
                     }
                 }
             }
